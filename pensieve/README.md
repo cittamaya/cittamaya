@@ -16,10 +16,18 @@ This plugin provides Claude Code integration through skills and hooks.
 
 **You must install the Pensieve CLI tool first:**
 
+**Requirements**: Pensieve CLI >=0.1.0
+
+**macOS** (via Homebrew):
 ```bash
-# Using Homebrew
-brew install pradeeproark/tap/pensieve
+brew tap pradeeproark/pensieve
+brew install pensieve
+
+# Verify installation
+pensieve --version  # Should show 0.1.0 or higher
 ```
+
+**Linux/Windows**: Coming soon. See [GitHub releases](https://github.com/pradeeproark/pensieve/releases) for manual binary downloads.
 
 The plugin provides the Claude Code integration (skills and hooks), but requires the Pensieve tool to be installed separately.
 
@@ -118,9 +126,12 @@ See the [Pensieve tool documentation](https://github.com/pradeeproark/pensieve) 
 Ensure the CLI tool is installed:
 
 ```bash
-brew install pradeeproark/tap/pensieve
-# or
-uv brew install pradeeproark/tap/pensieve
+# macOS
+brew tap pradeeproark/pensieve
+brew install pensieve
+
+# Verify
+pensieve --version
 ```
 
 ### Hooks not firing

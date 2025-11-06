@@ -20,42 +20,33 @@ The memory-management skill provides:
 
 ## Deployment
 
-### Quick Install (Recommended)
+This skill is distributed via the **Claude Code plugin system** as part of the Pensieve plugin.
 
-From the repo root, run:
+### For Users
+
+Install via the plugin marketplace:
 ```bash
-./install.sh
+/plugin marketplace add cittamaya/cittamaya
+/plugin install pensieve@cittamaya-marketplace
 ```
 
-This installs both the skill and hooks in one command.
+The plugin system automatically manages skill deployment. No manual installation needed.
 
-### Manual Deployment
+### For Plugin Developers
 
-To deploy just the skill:
-```bash
-./install-skill.sh
-```
+**Source location**: This repo (`cittamaya/pensieve/skills/memory-management/`)
 
-To deploy just the hooks:
-```bash
-./install-hooks.sh
-```
-
-### Deployment Process
-
-The skill is **tracked in this repo** at `.claude/skills/memory-management/` and **deployed to user level** at `~/.claude/skills/memory-management/`.
-
-**Workflow:**
-1. Make changes to files in `.claude/skills/memory-management/` (repo)
-2. Test changes by running `./install-skill.sh` to deploy to user directory
+**Deployment process**:
+1. Make changes to skill files in this repo
+2. Test by having users update plugin: `/plugin update pensieve@cittamaya-marketplace`
 3. Commit changes to repo when satisfied
-4. Users sync updates by running `./install-skill.sh` again
+4. Plugin system handles distribution to users automatically
 
-## Version Control
-
-- **Source of truth**: This repo (`.claude/skills/memory-management/`)
-- **Deployment target**: User directory (`~/.claude/skills/memory-management/`)
-- **DO NOT** edit files in user directory directly - they will be overwritten on next deployment
+**Version Control**:
+- **Source of truth**: This repo (`skills/memory-management/`)
+- **Deployed by**: Claude Code plugin system
+- **Updates via**: `/plugin update` command
+- **DO NOT** manually edit files in user's `~/.claude/` directory - managed by plugin system
 
 ## Recent Changes
 
@@ -66,12 +57,12 @@ git log --oneline .claude/skills/memory-management/
 
 ## Integration with Hooks
 
-This skill works best with the Pensieve hooks installed. The streamlined 3-hook system provides:
+This skill works best with the Pensieve hooks, which are automatically installed by the plugin. The streamlined 3-hook system provides:
 - **Session start**: MANDATORY protocol requiring memory search before starting work
 - **Session end**: Reminder to record learnings before context is lost
 - **Git commits**: Prompts to evaluate if commit contains recordable learnings using 3-question rubric
 
-Install hooks with `./install-hooks.sh`. See `hooks/README.md` for complete documentation.
+The plugin system automatically installs and manages hooks. See `hooks/README.md` for complete documentation.
 
 ## Testing
 
