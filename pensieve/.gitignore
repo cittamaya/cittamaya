@@ -1,0 +1,12 @@
+# Local test scripts
+test-*.sh
+
+# macOS
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
