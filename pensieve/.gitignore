@@ -1,5 +1,5 @@
-# Local test scripts
-test-*.sh
+# Local development scripts and tools
+.scripts/
 
 # macOS
 .DS_Store
