@@ -1,0 +1,21 @@
+{
+  "name": "cittamaya-marketplace",
+  "owner": {
+    "name": "Pradeep Roark",
+    "email": "pradeeproark@gmail.com"
+  },
+  "metadata": {
+    "description": "Claude Code tools for memory management and agent workflows",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "pensieve",
+      "source": "./pensieve/",
+      "description": "Memory recording and retrieval system for Claude Code agents",
+      "version": "1.0.0",
+      "strict": true,
+      "keywords": ["memory", "context", "persistence", "database", "skills", "hooks"]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pensieve",
+  "version": "1.0.0",
+  "description": "Memory management for Claude Code agents - structured recording and retrieval",
+  "author": {
+    "name": "Pradeep Roark",
+    "email": "pradeeproark@gmail.com",
+    "url": "https://github.com/pradeeproark"
+  },
+  "homepage": "https://github.com/pradeeproark/pensieve",
+  "repository": "https://github.com/cittamaya/cittamaya",
+  "license": "MIT",
+  "keywords": ["memory", "context", "persistence", "skills", "hooks"]
+}
