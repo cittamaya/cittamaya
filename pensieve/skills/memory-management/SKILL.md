@@ -264,6 +264,71 @@ Record a memory when you've learned something **non-obvious** that:
 - Temporary debugging notes
 - No context or explanation
 
+### Good Memory Structure: Field Design Principles
+
+<CRITICAL>
+Pensieve is for QUICK REFERENCE, not comprehensive documentation.
+Documents belong elsewhere (READMEs, wikis, docs/) with URLs referenced in entries.
+</CRITICAL>
+
+**Field Design Principles:**
+
+1. **Limited fields**: 3-6 fields per template maximum
+   - ✓ problem, root_cause, solution, learned (4 fields)
+   - ✗ problem, root_cause, solution, approach, alternatives, rejected_options, learned, references, related_issues (9 fields - too many!)
+
+2. **Concise field values**: Target 1-3 sentences per field
+   - Use max_length constraints (200-500 chars recommended)
+   - ✓ "Auth fails in CI due to missing JWT_SECRET env var"
+   - ✗ [500-word explanation of JWT architecture]
+
+3. **Reference, don't duplicate**:
+   - ✓ "See docs/architecture.md for full design"
+   - ✓ "Implementation in src/auth/jwt.py:234-240"
+   - ✗ [Paste entire file contents]
+
+4. **Judicious required fields**:
+   - Only mark fields "required" if truly essential for retrieval
+   - Optional fields = flexibility for different scenarios
+   - ✓ problem (required), solution (required), reference_url (optional)
+   - ✗ Everything marked required → agents struggle to fill
+
+5. **Field granularity**:
+   - One concept per field for searchability
+   - ✓ Separate: problem, root_cause, solution
+   - ✗ Combined: problem_and_solution
+
+**Examples:**
+
+❌ **Bad template** (too verbose, too many fields):
+```
+Template: bug_fix
+Fields:
+  - bug_description (required, text, max_length=2000)
+  - reproduction_steps (required, text, max_length=1000)
+  - root_cause_analysis (required, text, max_length=1500)
+  - attempted_solutions (required, text)
+  - final_solution (required, text, max_length=1500)
+  - code_changes (required, text, max_length=3000)
+  - test_results (required, text, max_length=1000)
+  - related_issues (optional, text)
+  - references (optional, url)
+```
+Why bad: 9 fields, 7 required, massive character limits, encourages documentation dump
+
+✅ **Good template** (concise, focused):
+```
+Template: problem_solved
+Fields:
+  - problem (required, text, max_length=300)
+  - root_cause (required, text, max_length=300)
+  - solution (required, text, max_length=500)
+  - files_changed (optional, text, max_length=200)
+  - learned (required, text, max_length=300)
+  - reference_url (optional, url)
+```
+Why good: 6 fields, 4 required, tight limits, focused on retrieval, references instead of duplicates
+
 ### Tags and Links: Making Memories Discoverable
 
 <CRITICAL>
@@ -285,20 +350,16 @@ Tags help you (and future agents) find relevant memories quickly. When creating 
 
 **How to add tags when creating entries:**
 ```bash
-# Add tags inline when creating entry
-pensieve entry create problem_solved \
-  --field problem="OAuth token expiry issues" \
-  --field solution="Added 120s clock skew tolerance" \
-  --tag oauth \
-  --tag production-bug \
-  --tag authentication
+# Add tags inline when creating entry (use single-line format to avoid permission dialogs)
+pensieve entry create problem_solved --field problem="OAuth token expiry issues" --field solution="Added 120s clock skew tolerance" --tag oauth --tag production-bug --tag authentication
 
-# Or in JSON file:
+# Or in JSON file (better for complex entries with long field values):
 {
   "problem": "...",
   "solution": "...",
   "tags": ["oauth", "production-bug", "authentication"]
 }
+pensieve entry create problem_solved --from-file entry.json
 ```
 
 **Links: Connect Related Learnings**
@@ -371,13 +432,18 @@ Task(
   1. Determine the most appropriate template using: pensieve template list
   2. Review the template structure: pensieve template show <name>
   3. Create the entry with all relevant fields AND 2-5 descriptive tags
+     - IMPORTANT: Use single-line format (no backslash continuation) to avoid permission dialogs
      - Use --tag for each tag (e.g., --tag oauth --tag production-bug)
+     - Keep field values concise (1-3 sentences per field)
+     - For entries with many fields or long values, use JSON --from-file approach instead
   4. If related entries were provided, create links using:
      - pensieve entry link <new-id> <related-id> --type <link-type>
   5. Verify the entry was created successfully
   6. Report back with the entry ID and tags used
 
-  CRITICAL: Do NOT skip tags. Every entry must have at least 2 tags.
+  CRITICAL:
+  - Do NOT skip tags. Every entry must have at least 2 tags.
+  - Do NOT use backslash continuation (\) in pensieve commands - use single-line format.
 
   Do NOT do anything else. Just record this memory with tags/links and confirm.
   """
@@ -389,6 +455,31 @@ Task(
 - For patterns: name, description, location, why useful, example, tags (domain, pattern-type)
 - For workarounds: issue, workaround, why needed, reference, tags (tool, problem-type)
 - For resources: name, URL, what it covers, when useful, tags (technology, documentation)
+
+**Single-Line vs JSON Approach:**
+
+Use **single-line format** for most entries:
+```bash
+pensieve entry create --template problem_solved --field problem="Brief description" --field solution="Concise fix" --tag tag1 --tag tag2
+```
+
+Use **JSON --from-file** for complex entries with:
+- Many fields (5+)
+- Long field values that need formatting
+- Special characters that complicate escaping
+
+```bash
+cat > /tmp/pensieve_entry.json << 'EOF'
+{
+  "problem": "Complex problem description with\nmultiple lines",
+  "root_cause": "Detailed root cause analysis",
+  "solution": "Multi-paragraph solution with \"quotes\"",
+  "learned": "Key takeaway",
+  "tags": ["tag1", "tag2", "tag3"]
+}
+EOF
+pensieve entry create --template problem_solved --from-file /tmp/pensieve_entry.json
+```
 
 **IMPORTANT: Always search first to find related entries:**
 Before spawning the subagent, run `pensieve entry search --tag <relevant-tag>` to check for related entries. Include any relevant entry IDs in the prompt so the subagent can create links.
