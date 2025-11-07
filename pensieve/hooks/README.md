@@ -16,14 +16,6 @@ This directory contains Claude Code hooks that integrate Pensieve memory managem
 - **Purpose**: Restore context from previous sessions and prevent duplicate work
 - **Enforcement**: Most critical hook - ensures memory search happens first
 
-### `session-end-memory-check.sh` (SessionEnd)
-**Session completion reminder**
-
-- **Trigger**: When Claude Code session ends
-- **Action**: Reminds to record significant learnings before context is lost
-- **Purpose**: Capture valuable insights before session closes
-- **Guidance**: Quick reminder to use memory-management skill
-
 ### `git-commit-memory-check.sh` (PostToolUse:Bash)
 **Post-commit recording reminder**
 
@@ -64,17 +56,6 @@ The hooks are configured in `~/.claude/settings.json`:
         ]
       }
     ],
-    "SessionEnd": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/session-end-memory-check.sh"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Bash",
@@ -100,9 +81,6 @@ Fires once per session at the beginning. Shows MANDATORY checklist requiring:
 4. Explicit acknowledgment of results
 
 **Critical**: This is not a suggestion. Claude MUST complete this protocol before responding to user requests.
-
-### Session End Hook
-Fires once per session at the end. Simple reminder to record learnings using the memory-management skill before context is lost.
 
 ### Git Commit Hook
 Fires after every Bash tool execution. The hook script:
@@ -138,9 +116,8 @@ Fires after every Bash tool execution. The hook script:
 ### Testing hooks locally
 
 ```bash
-# Test session hooks
+# Test session start hook
 ./hooks/session-memory-reminder.sh
-./hooks/session-end-memory-check.sh
 
 # Test git commit hook
 echo '{"tool_input":{"command":"git commit -m test"}}' | ./hooks/git-commit-memory-check.sh
@@ -167,6 +144,5 @@ The hooks support this streamlined workflow:
 1. **Session Start** → MANDATORY memory search protocol
 2. **Work on Task** → Normal development workflow
 3. **Git Commit** → Prompted to evaluate if commit contains recordable learnings
-4. **Session End** → Final reminder to capture any missed insights
 
 This ensures you never miss opportunities to leverage or contribute to your memory bank without being intrusive during active development.
