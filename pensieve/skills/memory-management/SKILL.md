@@ -17,6 +17,71 @@ This skill guides you to use Pensieve as a **curated notebook**, not a comprehen
 - When stuck on a problem (to retrieve past learnings)
 </EXTREMELY-IMPORTANT>
 
+# PENSIEVE CLI INSTALLATION CHECK
+
+<CRITICAL>
+**BEFORE using any Pensieve commands, verify the CLI tool is installed.**
+
+**Detection Protocol:**
+
+When this skill is invoked, check if pensieve is available:
+
+```bash
+pensieve --version
+```
+
+**If pensieve is NOT installed** (exit code 127 / command not found):
+
+1. **Inform the user:**
+   ```
+   ⚠️  Pensieve CLI Not Detected
+
+   The Pensieve memory system requires the CLI tool to be installed first.
+
+   📖 Installation Instructions:
+   See the Prerequisites section in:
+   [pensieve plugin README](../../README.md)
+
+   Quick summary:
+   - macOS: brew tap pradeeproark/pensieve && brew install pensieve
+   - Linux/Windows: See README for latest instructions
+
+   Benefits of Pensieve:
+   • Save project-specific learnings across sessions
+   • Build searchable knowledge base of solutions
+   • Tag and link related memories
+   • Avoid re-discovering the same solutions
+
+   I can continue without Pensieve, but memory features will be unavailable.
+   ```
+
+2. **Ask the user:** "Would you like to install Pensieve now, or shall I continue without it?"
+
+3. **Handle response:**
+   - If installing: Guide them to the README, wait for confirmation, then verify with `pensieve --version`
+   - If declining: Acknowledge and proceed with graceful degradation (see below)
+
+**If pensieve IS installed:**
+- Proceed normally with all Pensieve workflows
+- No need to mention to the user
+
+**Graceful Degradation (when Pensieve unavailable):**
+
+When Pensieve is not installed and user chooses to continue:
+- ✅ Continue with the user's requested task
+- ❌ Skip MANDATORY SESSION START PROTOCOL pensieve search
+- ❌ Skip MANDATORY TODO PROTOCOL pensieve-related todos
+- ❌ Do NOT attempt to record memories or spawn recording subagents
+- 💡 Optionally: At task completion, if significant learnings occurred, briefly remind user that Pensieve could have captured these insights for future sessions
+
+**Why This Approach:**
+
+- Pensieve is powerful but optional - don't block immediate work
+- Users should know the tool exists and its benefits
+- Reference authoritative docs to avoid outdated info
+- Graceful degradation keeps agent useful even without Pensieve
+</CRITICAL>
+
 # MANDATORY TODO PROTOCOL
 
 <CRITICAL>
