@@ -96,6 +96,38 @@ pensieve entry search --template problem_solved
 pensieve entry show <entry-id>
 ```
 
+### Memory Management Commands
+
+**Quick access commands** for explicit memory operations:
+
+**Recording memories:**
+```bash
+# Plugin-level command (works anywhere with plugin installed)
+/pensieve:remember [optional-context]
+
+# Project-level alias (shorter, via symlink)
+/remember [optional-context]
+```
+
+Examples:
+- `/remember oauth-fix` - Record learnings about OAuth fix
+- `/remember` - Evaluate recent work for recording
+
+**Recalling memories:**
+```bash
+# Plugin-level command
+/pensieve:recall [optional-context]
+
+# Project-level alias (via symlink)
+/recall [optional-context]
+```
+
+Examples:
+- `/recall authentication` - Search for auth-related memories
+- `/recall` - Browse recent memories
+
+These commands invoke the memory-management skill with specific context.
+
 ## Common Templates
 
 Create these templates for effective memory management:

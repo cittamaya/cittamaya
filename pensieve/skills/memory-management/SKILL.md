@@ -30,6 +30,27 @@ When this skill is invoked, check if pensieve is available:
 pensieve --version
 ```
 
+**Version Update Check:**
+
+After verifying pensieve is installed, check if you're running a current version:
+
+1. **Compare output against minimum required version** (>=0.1.0 per README)
+2. **If version is outdated:**
+   - Inform user: "⚠️ Pensieve CLI version X.X.X detected. Recommended: >=0.1.0"
+   - Show upgrade command: `brew upgrade pensieve` (macOS)
+   - Explain: Outdated versions may lack features or have known issues
+   - **Allow continuation** but note potential limitations
+
+3. **If version is current:** Proceed silently (no need to mention)
+
+**Why keep updated:**
+- New template features and field types
+- Performance improvements in search
+- Bug fixes for edge cases
+- Enhanced linking and tagging capabilities
+
+**Reference:** See [README Prerequisites](../../README.md) for authoritative version requirements.
+
 **If pensieve is NOT installed** (exit code 127 / command not found):
 
 1. **Inform the user:**
