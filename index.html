@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pensieve Plugin for Claude Code | Cittamaya</title>
+    <meta name="description" content="Use Pensieve with Claude Code - automatic memory search and contextual recall for AI agents">
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text: #eaeaea;
+            --text-muted: #a0a0a0;
+            --accent: #0f9d58;
+            --accent-hover: #0d8c4d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover { color: var(--accent); }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .hero .tagline {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .cta-button:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Sections */
+        section {
+            padding: 3rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        section p {
+            margin-bottom: 1rem;
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Features grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            margin-top: 0;
+            font-size: 1.25rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            section h2 { font-size: 1.5rem; }
+            nav { margin-top: 1rem; }
+            .header-content { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">Pensieve Plugin</a>
+            <nav>
+                <a href="https://pradeeproark.github.io/pensieve/">Pensieve Docs</a>
+                <a href="https://github.com/cittamaya/cittamaya">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Pensieve Plugin for Claude Code</h1>
+            <p class="tagline">Automatic memory search and contextual recall for AI agents</p>
+            <a href="#quick-start" class="cta-button">Get Started</a>
+        </section>
+
+        <!-- What is it -->
+        <section id="what">
+            <h2>What is this?</h2>
+            <p>The Pensieve plugin integrates <a href="https://pradeeproark.github.io/pensieve/">Pensieve</a> with Claude Code, enabling your AI agent to automatically search and recall relevant memories from past sessions.</p>
+            <p>When Claude starts a new session in your project, it automatically searches for relevant context, patterns, and solutions you've recorded previously - preventing repeated mistakes and building on past learnings.</p>
+        </section>
+
+        <!-- Quick Start -->
+        <section id="quick-start">
+            <h2>Quick Start</h2>
+
+            <h3>Prerequisites</h3>
+            <p>First, ensure Pensieve CLI is installed:</p>
+            <pre><code># Install via Homebrew (macOS)
+brew tap cittamaya/pensieve
+brew install pensieve
+
+# Verify installation
+pensieve --version</code></pre>
+            <p>See <a href="https://pradeeproark.github.io/pensieve/getting-started/">installation guide</a> for other platforms.</p>
+
+            <h3>Option 1: Interactive Installation (Recommended)</h3>
+            <p>In any Claude Code session, type:</p>
+            <pre><code>/plugin</code></pre>
+            <p>This opens an interactive menu where you can:</p>
+            <ol>
+                <li>Add the Cittamaya marketplace (if not already added)</li>
+                <li>Browse and install the Pensieve plugin</li>
+                <li>Manage installed plugins</li>
+            </ol>
+
+            <h3>Option 2: CLI Installation</h3>
+
+            <h4>Step 1: Add Cittamaya Marketplace (if not already added)</h4>
+            <pre><code>claude plugin marketplace add https://github.com/cittamaya/cittamaya.git</code></pre>
+
+            <h4>Step 2: Install Pensieve Plugin</h4>
+            <pre><code># Install plugin (auto-detects from available marketplaces)
+claude plugin install pensieve
+
+# Or specify the marketplace explicitly
+claude plugin install pensieve@cittamaya-marketplace</code></pre>
+
+            <h3>That's It!</h3>
+            <p>Once installed, Pensieve automatically:</p>
+            <ul>
+                <li>✅ Hooks into session start - searches for relevant memories automatically</li>
+                <li>✅ Makes the <code>memory-management</code> skill available</li>
+                <li>✅ Responds to natural language like "remember this" or "recall that pattern"</li>
+            </ul>
+            <p>No initialization needed - just start a new Claude Code session and the plugin is active!</p>
+        </section>
+
+        <!-- Features -->
+        <section id="features">
+            <h2>Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🔍</span>
+                    <h3>Automatic Search</h3>
+                    <p>Claude searches for relevant memories at the start of each session</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🧠</span>
+                    <h3>Contextual Recall</h3>
+                    <p>Surfaces past learnings relevant to current work</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🔗</span>
+                    <h3>Knowledge Graphs</h3>
+                    <p>Linked entries build connected expertise over time</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📝</span>
+                    <h3>Seamless Recording</h3>
+                    <p>Claude prompts to record new learnings naturally</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- See It In Action -->
+        <section id="showcase">
+            <h2>See It In Action</h2>
+            <p>Check out the <a href="https://pradeeproark.github.io/pensieve/demos/">interactive demos</a> showing Pensieve working with Claude Code across multiple sessions:</p>
+            <ul>
+                <li><strong>Session 1:</strong> Discovering date parsing ambiguity bug</li>
+                <li><strong>Session 2:</strong> Automatic recall prevents repeating the mistake</li>
+                <li><strong>Session 3:</strong> Pattern recognition across all sessions</li>
+            </ul>
+            <p>Watch how Claude automatically finds relevant memories, evaluates learnings against rubric criteria, and builds knowledge graphs - all without explicit prompting.</p>
+        </section>
+
+        <!-- Documentation -->
+        <section id="documentation">
+            <h2>Documentation</h2>
+            <p>For complete documentation on using Pensieve:</p>
+            <ul>
+                <li><a href="https://pradeeproark.github.io/pensieve/">Pensieve Documentation</a> - Complete CLI reference</li>
+                <li><a href="https://pradeeproark.github.io/pensieve/reference/">Command Reference</a> - All CLI commands</li>
+                <li><a href="https://pradeeproark.github.io/pensieve/why/">Why Pensieve?</a> - Learn about contextual scratchpad memory</li>
+            </ul>
+
+            <h3>How It Works</h3>
+            <p>The plugin provides three ways to interact with Pensieve:</p>
+
+            <h4>1. Automatic (Recommended)</h4>
+            <p>The <code>memory-management</code> skill automatically activates when you use memory-related words in conversation:</p>
+            <ul>
+                <li>"<strong>Remember</strong> this pattern for future sessions"</li>
+                <li>"<strong>Recall</strong> what we learned about date parsing"</li>
+                <li>"<strong>Note</strong> that this approach works best"</li>
+                <li>"Don't <strong>forget</strong> this workaround"</li>
+            </ul>
+            <p>Claude automatically searches pensieve and records learnings based on context.</p>
+
+            <h4>2. Explicit Slash Commands</h4>
+            <p>For direct control:</p>
+            <pre><code>/pensieve:remember  # Record current context to pensieve
+/pensieve:recall    # Search pensieve for relevant memories</code></pre>
+
+            <h4>3. Session Hooks</h4>
+            <p>Automatic memory search runs at the start of each session in your project, surfacing relevant past learnings before you even ask.</p>
+        </section>
+
+        <!-- Contributing -->
+        <section id="contributing">
+            <h2>Contributing</h2>
+            <p>This plugin is part of the <a href="https://github.com/cittamaya">Cittamaya</a> organization's collection of agentic tools.</p>
+            <p>Found a bug or have a feature request? <a href="https://github.com/cittamaya/cittamaya/issues">Open an issue</a> on GitHub.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Cittamaya | <a href="https://pradeeproark.github.io/pensieve/">Pensieve Docs</a> | <a href="https://github.com/cittamaya/cittamaya">GitHub</a></p>
+        </div>
+    </footer>
+</body>
+</html>
