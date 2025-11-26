@@ -5,6 +5,20 @@ All notable changes to the Pensieve plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-26
+
+### Added
+- Automatic CLI update checking at session start via SessionStart hook
+  - Detects outdated pensieve CLI via `brew outdated`
+  - Prompts user: "Would you like me to update Pensieve CLI now?"
+  - Non-blocking: silently skips if Homebrew unavailable
+  - Shows current → latest version numbers for informed decisions
+
+### Changed
+- Moved version checking from skill invocation to session start (more proactive)
+- Updated SKILL.md documentation to reflect automatic version checking
+- SessionStart hook now uses `jq` for proper JSON escaping (with fallback for systems without jq)
+
 ## [1.1.0] - 2025-11-14
 
 ### Added

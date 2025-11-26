@@ -30,18 +30,28 @@ When this skill is invoked, check if pensieve is available:
 pensieve --version
 ```
 
-**Version Update Check:**
+**Version Update Check (Automatic):**
 
-After verifying pensieve is installed, check if you're running a current version:
+Version checking happens **automatically at session start** via the SessionStart hook. You don't need to check manually.
 
-1. **Compare output against minimum required version** (>=0.1.0 per README)
-2. **If version is outdated:**
-   - Inform user: "⚠️ Pensieve CLI version X.X.X detected. Recommended: >=0.1.0"
-   - Show upgrade command: `brew upgrade pensieve` (macOS)
-   - Explain: Outdated versions may lack features or have known issues
-   - **Allow continuation** but note potential limitations
+**How it works:**
+1. The hook runs `brew outdated pensieve` at session start
+2. If an update is available, you'll see a prompt in the session start message
+3. Ask the user: "Would you like me to update Pensieve CLI now? (brew upgrade pensieve)"
+4. If user agrees, run `brew upgrade pensieve`
+5. If user declines, continue normally
 
-3. **If version is current:** Proceed silently (no need to mention)
+**If prompted about an update:**
+- Respect user choice - don't nag about updates
+- If user says yes, run: `brew upgrade pensieve`
+- If user says no, proceed with normal workflow
+
+**Manual version check (if needed):**
+```bash
+pensieve --version          # Check current version
+brew outdated pensieve      # Check if update available
+brew upgrade pensieve       # Apply update
+```
 
 **Why keep updated:**
 - New template features and field types
