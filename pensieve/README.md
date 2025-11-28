@@ -59,11 +59,6 @@ The plugin provides the Claude Code integration (skills and hooks), but requires
 - Reminds Claude to search for existing memories
 - Prevents re-discovering solutions
 
-**Session End** - Recording reminder
-- Fires when session ends
-- Prompts to record any significant learnings
-- Captures insights before context is lost
-
 **Git Commit** - Learning evaluation
 - Fires after `git commit` commands
 - Applies 3-question rubric to evaluate if commit should be recorded
@@ -78,7 +73,6 @@ Once installed, Claude Code will automatically:
 1. **At session start**: Search Pensieve and show existing memories
 2. **During development**: Use memory-management skill for guidance
 3. **After commits**: Evaluate and optionally record learnings
-4. **At session end**: Remind to capture final insights
 
 ### Manual Commands
 

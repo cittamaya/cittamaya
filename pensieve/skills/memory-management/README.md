@@ -57,9 +57,8 @@ git log --oneline .claude/skills/memory-management/
 
 ## Integration with Hooks
 
-This skill works best with the Pensieve hooks, which are automatically installed by the plugin. The streamlined 3-hook system provides:
+This skill works best with the Pensieve hooks, which are automatically installed by the plugin. The 2-hook system provides:
 - **Session start**: MANDATORY protocol requiring memory search before starting work
-- **Session end**: Reminder to record learnings before context is lost
 - **Git commits**: Prompts to evaluate if commit contains recordable learnings using 3-question rubric
 
 The plugin system automatically installs and manages hooks. See `hooks/README.md` for complete documentation.

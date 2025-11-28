@@ -14,7 +14,7 @@ Memory recording and retrieval system for Claude Code agents. Enables structured
 
 **What you get:**
 - **Skills**: `memory-management` - Comprehensive guidance on using Pensieve effectively
-- **Hooks**: Automatic reminders at session start/end and after git commits
+- **Hooks**: Automatic reminders at session start and after git commits
 - **Integration**: Seamless integration with the Pensieve CLI tool
 
 **Repository**: [pensieve](https://github.com/pradeeproark/pensieve)
@@ -49,7 +49,6 @@ Once installed, Claude Code will:
 1. **At session start**: Remind you to search Pensieve for relevant memories
 2. **During work**: Provide the `memory-management` skill for recording guidance
 3. **After git commits**: Prompt you to evaluate if the commit contains recordable learnings
-4. **At session end**: Remind you to record any significant learnings
 
 See the [Pensieve plugin README](./pensieve/README.md) for detailed usage instructions.
 
