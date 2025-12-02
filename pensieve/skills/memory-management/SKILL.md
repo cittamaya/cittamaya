@@ -30,23 +30,29 @@ When this skill is invoked, check if pensieve is available:
 pensieve --version
 ```
 
-**Version Update Check (Automatic):**
+**Version Update Check (MANDATORY when skill is invoked):**
 
-Version checking happens **automatically at session start** via the SessionStart hook. You don't need to check manually.
+<CRITICAL>
+**EVERY TIME this skill is invoked, you MUST check for updates:**
 
-**How it works:**
-1. The hook runs `brew outdated pensieve` at session start
-2. If an update is available, you'll see a prompt in the session start message
-3. Ask the user: "Would you like me to update Pensieve CLI now? (brew upgrade pensieve)"
-4. If user agrees, run `brew upgrade pensieve`
-5. If user declines, continue normally
+```bash
+brew outdated pensieve
+```
 
-**If prompted about an update:**
-- Respect user choice - don't nag about updates
-- If user says yes, run: `brew upgrade pensieve`
-- If user says no, proceed with normal workflow
+**If output shows `pensieve` (meaning update available):**
+1. Tell the user: "Pensieve CLI update available. Would you like me to update now? (`brew upgrade pensieve`)"
+2. If user agrees: run `brew upgrade pensieve`
+3. If user declines: acknowledge and continue
 
-**Manual version check (if needed):**
+**If output is empty:** No update needed, continue normally.
+
+**Why this is mandatory:**
+- SessionStart hook may miss updates (brew cache, timing issues)
+- Updates contain bug fixes that affect agent behavior
+- This skill is the authoritative place to ensure Pensieve is current
+</CRITICAL>
+
+**Manual version check (reference):**
 ```bash
 pensieve --version          # Check current version
 brew outdated pensieve      # Check if update available
