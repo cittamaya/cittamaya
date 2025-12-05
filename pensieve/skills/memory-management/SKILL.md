@@ -157,19 +157,19 @@ When Pensieve is not installed and user chooses to continue:
 **BEFORE responding to ANY user request in a project, you MUST complete this checklist:**
 
 1. ☐ Invoke the `memory-management` skill using the Skill tool
-2. ☐ Run `pensieve entry search` to check for existing memories
-3. ☐ Show the search output to the user (even if empty)
-4. ☐ Acknowledge what was found or explicitly state "No memories found"
+2. ☐ Run `pensieve journal` to see recent project activity
+3. ☐ Review the journal output with the user
+4. ☐ Acknowledge what was found or explicitly state "No recent activity"
 
 **This is NOT optional. This is NOT a suggestion. You MUST complete this protocol.**
 
 **Why this matters:**
-- Without searching, you may duplicate work already done
+- The journal shows recent project context and learnings
 - Past learnings contain solutions to problems you're about to face
-- Empty searches are OK - acknowledging them shows you checked
-- Skipping this protocol means wasting time re-discovering solutions
+- Empty journals are OK - acknowledging them shows you checked
+- Skipping this protocol means missing context and re-discovering solutions
 
-**Note**: Saying "No memories found" is REQUIRED. It proves you checked.
+**Note**: Saying "No recent activity" is REQUIRED. It proves you checked.
 </CRITICAL>
 
 # COMMON RATIONALIZATIONS (THAT MEAN YOU'RE ABOUT TO FAIL)

@@ -27,22 +27,22 @@ read -r -d '' CONTEXT << 'HEREDOC'
 BEFORE responding to ANY user request in this project, you MUST complete this checklist:
 
 1. ☐ Invoke memory-management skill using Skill tool
-2. ☐ Run: pensieve entry search
-3. ☐ Show the search output to the user (even if empty)
-4. ☐ Acknowledge findings or explicitly state "No memories found"
+2. ☐ Run: pensieve journal
+3. ☐ Review the journal output with the user
+4. ☐ Acknowledge findings or explicitly state "No recent activity"
 
 This is NOT optional. This is NOT a suggestion. You MUST complete this protocol.
 
-Why: Past learnings contain solutions to problems you're about to face.
-Skipping this protocol = wasting time re-discovering known solutions.
+Why: The journal shows recent project activity and learnings you need to know.
+Skipping this protocol = missing context and re-discovering known solutions.
 
-Evidence before claims - always show the actual search output to the user.
+Evidence before claims - always show the journal output to the user.
 
 **If you catch yourself thinking:**
-- "This is just a quick question" → WRONG. Search first.
-- "I'll search after I gather context" → WRONG. Search IS gathering context.
-- "Let me investigate first" → WRONG. Memories tell you where to investigate.
-- "This doesn't need memory search" → WRONG. You don't know until you search.
+- "This is just a quick question" → WRONG. Check the journal first.
+- "I'll check after I gather context" → WRONG. The journal IS context.
+- "Let me investigate first" → WRONG. The journal tells you where to look.
+- "This doesn't need a journal check" → WRONG. You don't know until you check.
 
 **THE PROTOCOL IS MANDATORY. COMPLETE IT NOW.**
 </EXTREMELY_IMPORTANT>
