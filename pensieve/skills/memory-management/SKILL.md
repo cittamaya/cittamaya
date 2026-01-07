@@ -451,9 +451,23 @@ Tags help you (and future agents) find relevant memories quickly. When creating 
 - Resolution: `resolved`, `ongoing`, `blocking`
 
 **How to add tags when creating entries:**
+
+Tags are validated during entry creation:
+- `--tag <name>` uses an existing tag (fails if tag doesn't exist)
+- `--new-tag <name>` creates a new tag and uses it
+- On cold start (no tags in project), `--tag` accepts any value
+
 ```bash
-# Add tags inline when creating entry (use single-line format to avoid permission dialogs)
-pensieve entry create problem_solved --field problem="OAuth token expiry issues" --field solution="Added 120s clock skew tolerance" --tag oauth --tag production-bug --tag authentication
+# Use existing tags (validated against project_tags)
+pensieve entry create --template problem_solved \
+  --field problem="OAuth token expiry issues" \
+  --field solution="Added 120s clock skew tolerance" \
+  --tag oauth --tag production-bug --tag authentication
+
+# Create new tags while creating entry
+pensieve entry create --template problem_solved \
+  --field problem="..." \
+  --tag oauth --new-tag clock-skew
 
 # Or in JSON file (better for complex entries with long field values):
 {
@@ -461,7 +475,22 @@ pensieve entry create problem_solved --field problem="OAuth token expiry issues"
   "solution": "...",
   "tags": ["oauth", "production-bug", "authentication"]
 }
-pensieve entry create problem_solved --from-file entry.json
+pensieve entry create --template problem_solved --from-file entry.json
+
+# Pre-create tags before using them
+pensieve tag create authentication oauth security
+```
+
+**If you use an unknown tag, the CLI shows available tags:**
+```
+❌ Tag 'authn' not found.
+
+Available tags (3):
+  authentication    15 entries
+  oauth              6 entries
+  security           2 entries
+
+Use --new-tag to create new tags.
 ```
 
 **Links: Connect Related Learnings**
@@ -533,19 +562,21 @@ Task(
   **Your task:**
   1. Determine the most appropriate template using: pensieve template list
   2. Review the template structure: pensieve template show <name>
-  3. Create the entry with all relevant fields AND 2-5 descriptive tags
-     - IMPORTANT: Use single-line format (no backslash continuation) to avoid permission dialogs
-     - Use --tag for each tag (e.g., --tag oauth --tag production-bug)
+  3. Check existing tags: pensieve tag list
+  4. Create the entry with all relevant fields AND 2-5 descriptive tags
+     - Use --tag for existing tags (validated against project)
+     - Use --new-tag for genuinely new concepts
      - Keep field values concise (1-3 sentences per field)
      - For entries with many fields or long values, use JSON --from-file approach instead
-  4. If related entries were provided, create links using:
+  5. If related entries were provided, create links using:
      - pensieve entry link <new-id> <related-id> --type <link-type>
-  5. Verify the entry was created successfully
-  6. Report back with the entry ID and tags used
+  6. Verify the entry was created successfully
+  7. Report back with the entry ID and tags used
 
   CRITICAL:
   - Do NOT skip tags. Every entry must have at least 2 tags.
-  - Do NOT use backslash continuation (\) in pensieve commands - use single-line format.
+  - Use --tag for existing tags, --new-tag only for genuinely new concepts.
+  - If --tag fails (unknown tag), check existing tags and use the canonical one.
 
   Do NOT do anything else. Just record this memory with tags/links and confirm.
   """
@@ -562,7 +593,11 @@ Task(
 
 Use **single-line format** for most entries:
 ```bash
-pensieve entry create --template problem_solved --field problem="Brief description" --field solution="Concise fix" --tag tag1 --tag tag2
+# Using existing tags
+pensieve entry create --template problem_solved --field problem="Brief description" --field solution="Concise fix" --tag existing-tag1 --tag existing-tag2
+
+# Creating new tags
+pensieve entry create --template problem_solved --field problem="Brief description" --field solution="Concise fix" --tag existing-tag --new-tag new-concept
 ```
 
 Use **JSON --from-file** for complex entries with:
@@ -647,13 +682,18 @@ auth                   2 entries
 # - "auth" is less common (2 uses)
 # - Should use "authentication" for consistency
 
-# 3. Create entry with established tags
-pensieve entry create problem_solved \
+# 3. Create entry with established tags (--tag validates against existing)
+pensieve entry create --template problem_solved \
   --field problem="OAuth token refresh failing" \
   --field solution="..." \
   --tag authentication \
   --tag oauth \
   --tag production-bug
+
+# 4. If you need a genuinely new tag, use --new-tag
+pensieve entry create --template problem_solved \
+  --field problem="..." \
+  --tag oauth --new-tag jwt-validation
 ```
 
 **Red flags (indicates you didn't check):**
@@ -752,8 +792,8 @@ Check for existing solutions or workarounds before investigating from scratch. U
 
 **When better solutions found:**
 ```bash
-# Create new entry with improved solution
-pensieve entry create problem_solved \
+# Create new entry with improved solution (use existing tags)
+pensieve entry create --template problem_solved \
   --field problem="..." \
   --field solution="Improved approach: ..." \
   --tag oauth --tag production-bug
@@ -764,11 +804,11 @@ pensieve entry link <new-id> <old-id> --type supersedes
 
 **When workarounds become obsolete:**
 ```bash
-# Create resolution entry
-pensieve entry create problem_solved \
+# Create resolution entry (use existing tags, add new if needed)
+pensieve entry create --template problem_solved \
   --field problem="Original workaround no longer needed" \
   --field solution="Fixed in library version 2.3" \
-  --tag oauth --tag resolved
+  --tag oauth --new-tag resolved
 
 # Deprecate old workaround
 pensieve entry link <new-id> <workaround-id> --type deprecates
