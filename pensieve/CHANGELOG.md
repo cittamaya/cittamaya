@@ -5,6 +5,15 @@ All notable changes to the Pensieve plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-07
+
+### Changed
+- Updated skill documentation for new tag validation during entry creation (Pensieve CLI v0.7.0)
+  - Use `--tag` for existing tags, `--new-tag` for creating new tags inline
+  - Cold start behavior: when no tags exist, any tags are accepted
+  - Validation shows available tags on error for better tag reuse
+- Updated subagent prompt template with new tagging syntax
+
 ## [1.2.0] - 2025-11-26
 
 ### Added
