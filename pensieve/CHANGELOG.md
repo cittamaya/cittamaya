@@ -5,6 +5,15 @@ All notable changes to the Pensieve plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-01-12
+
+### Changed
+- Updated skill documentation for new landscape journal view (Pensieve CLI v0.9.0)
+  - `pensieve journal` now shows an ASCII heatmap of ALL project memories by tag
+  - Progressive disclosure: landscape → cluster zoom → entry view
+  - Landscape shows tag activity intensity, recency indicators, and related tags
+  - Agents can now grasp the entire memory system at a glance before zooming in
+
 ## [1.3.0] - 2026-01-07
 
 ### Changed

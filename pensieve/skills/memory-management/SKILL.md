@@ -157,19 +157,32 @@ When Pensieve is not installed and user chooses to continue:
 **BEFORE responding to ANY user request in a project, you MUST complete this checklist:**
 
 1. ☐ Invoke the `memory-management` skill using the Skill tool
-2. ☐ Run `pensieve journal` to see recent project activity
-3. ☐ Review the journal output with the user
-4. ☐ Acknowledge what was found or explicitly state "No recent activity"
+2. ☐ Run `pensieve journal` to see the memory landscape
+3. ☐ Review the landscape with the user
+4. ☐ Acknowledge what was found or explicitly state "No memories in this project"
 
 **This is NOT optional. This is NOT a suggestion. You MUST complete this protocol.**
 
-**Why this matters:**
-- The journal shows recent project context and learnings
-- Past learnings contain solutions to problems you're about to face
-- Empty journals are OK - acknowledging them shows you checked
-- Skipping this protocol means missing context and re-discovering solutions
+**Understanding the Landscape:**
 
-**Note**: Saying "No recent activity" is REQUIRED. It proves you checked.
+The journal displays an ASCII heatmap showing ALL project memories organized by tag:
+- Tags sorted by activity (most active first)
+- Weekly activity intensity shown with block characters (██ HIGH → ·· NONE)
+- Recency indicators: ● hot (<3 days), ◐ warm (<14 days), ○ cold
+- Related tags showing connections between memory clusters
+
+**Progressive Disclosure:**
+1. Start with `pensieve journal` to see the full landscape
+2. Zoom into a cluster: `pensieve journal --tag <tag>` to see recent entries for that tag
+3. View specific entry: `pensieve entry show <id>` to read the full memory
+
+**Why this matters:**
+- The landscape shows the ENTIRE memory system at a glance, not just recent entries
+- Helps identify which areas have active knowledge vs cold/stale memories
+- Related tags reveal connections you might not have considered
+- Empty landscapes are OK - acknowledging them shows you checked
+
+**Note**: Saying "No memories found" is REQUIRED. It proves you checked.
 </CRITICAL>
 
 # COMMON RATIONALIZATIONS (THAT MEAN YOU'RE ABOUT TO FAIL)
