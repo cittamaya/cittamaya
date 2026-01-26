@@ -13,7 +13,7 @@
       "name": "pensieve",
       "source": "./pensieve/",
       "description": "Memory recording and retrieval system for Claude Code agents",
-      "version": "1.3.0",
+      "version": "1.5.0",
       "strict": true,
       "keywords": ["memory", "context", "persistence", "database", "skills", "hooks"]
     }

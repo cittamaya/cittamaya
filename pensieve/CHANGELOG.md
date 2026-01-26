@@ -5,6 +5,22 @@ All notable changes to the Pensieve plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-01-26
+
+### Changed
+- **Subagent-first approach**: Revised skill to recommend Bash subagents for Pensieve CLI operations
+  - CLI installation/update checks now use background Bash subagent
+  - Recording memories now uses Bash subagent (was general-purpose) with `run_in_background=True`
+  - Search operations during work use foreground Bash subagent
+  - Tag listing uses foreground Bash subagent
+  - Memory maintenance (linking, deprecating) uses background Bash subagent
+- Added new "Subagent Best Practices" section with guidance on:
+  - When to use Bash vs general-purpose subagents
+  - Background vs foreground mode selection
+  - Evidence-before-claims with subagent output
+- Session start `pensieve journal` remains inline (user needs to see it immediately)
+- Reduces main conversation context usage and improves efficiency
+
 ## [1.4.0] - 2026-01-12
 
 ### Changed

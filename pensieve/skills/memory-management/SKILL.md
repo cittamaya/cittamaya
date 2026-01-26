@@ -24,27 +24,37 @@ This skill guides you to use Pensieve as a **curated notebook**, not a comprehen
 
 **Detection Protocol:**
 
-When this skill is invoked, check if pensieve is available:
+When this skill is invoked, spawn a **background Bash subagent** to check installation and updates:
 
-```bash
-pensieve --version
+```python
+Task(
+  subagent_type="Bash",
+  run_in_background=True,
+  description="Check Pensieve CLI status",
+  prompt="""
+  # Check if pensieve is installed
+  if ! pensieve --version 2>&1; then
+    echo "PENSIEVE_NOT_INSTALLED"
+    exit 1
+  fi
+
+  # Check for updates
+  UPDATE=$(brew outdated pensieve 2>/dev/null)
+  if [ -n "$UPDATE" ]; then
+    echo "UPDATE_AVAILABLE: $UPDATE"
+  else
+    echo "UP_TO_DATE"
+  fi
+  """
+)
 ```
 
-**Version Update Check (MANDATORY when skill is invoked):**
+**Why background subagent**: The check shouldn't block the user's first message. Main agent can proceed while subagent verifies.
 
-<CRITICAL>
-**EVERY TIME this skill is invoked, you MUST check for updates:**
-
-```bash
-brew outdated pensieve
-```
-
-**If output shows `pensieve` (meaning update available):**
-1. Tell the user: "Pensieve CLI update available. Would you like me to update now? (`brew upgrade pensieve`)"
-2. If user agrees: run `brew upgrade pensieve`
-3. If user declines: acknowledge and continue
-
-**If output is empty:** No update needed, continue normally.
+**Handle subagent results when it reports back:**
+- `PENSIEVE_NOT_INSTALLED`: Inform user, offer installation guidance (see below)
+- `UPDATE_AVAILABLE`: Tell user: "Pensieve CLI update available. Would you like me to update now? (`brew upgrade pensieve`)"
+- `UP_TO_DATE`: No action needed, continue normally
 
 **Why this is mandatory:**
 - SessionStart hook may miss updates (brew cache, timing issues)
@@ -157,11 +167,17 @@ When Pensieve is not installed and user chooses to continue:
 **BEFORE responding to ANY user request in a project, you MUST complete this checklist:**
 
 1. ☐ Invoke the `memory-management` skill using the Skill tool
-2. ☐ Run `pensieve journal` to see the memory landscape
+2. ☐ Run `pensieve journal` **inline** to see the memory landscape
 3. ☐ Review the landscape with the user
 4. ☐ Acknowledge what was found or explicitly state "No memories in this project"
 
 **This is NOT optional. This is NOT a suggestion. You MUST complete this protocol.**
+
+**Why `pensieve journal` stays inline (not a subagent):**
+- It's the first thing users see at session start - immediate value
+- You need the output visible to "review with user" (step 3)
+- The journal sets context for the entire session
+- Unlike installation checks (which can run in background), this is user-facing
 
 **Understanding the Landscape:**
 
@@ -537,70 +553,101 @@ pensieve entry link <new-entry-id> <related-id> --type relates_to
 - [ ] Does this relate to existing entries? (search first to check)
 - [ ] Should I link this to previous learnings?
 
+## Subagent Best Practices for Pensieve Operations
+
+### Why Use Subagents?
+
+1. **Context efficiency**: CLI output stays out of main conversation
+2. **Non-blocking**: Background operations don't interrupt user
+3. **Clean separation**: Main agent focuses on user's task, subagents handle CLI
+
+### Choosing Subagent Type
+
+| Task | Subagent Type | Why |
+|------|--------------|-----|
+| Single CLI command | Bash | Direct, minimal overhead |
+| Pre-planned multi-command | Bash (chain with `&&`) | Commands ready to execute |
+| Mid-workflow decisions needed | general-purpose | Can adapt based on output |
+
+**Rule of thumb**: If you know exactly what commands to run before spawning, use Bash.
+
+### Background vs Foreground
+
+| Use Background When | Use Foreground When |
+|---------------------|---------------------|
+| Recording memories | Searching (need results to continue) |
+| Linking entries | Checking tags (need list before creating) |
+| Installation/update checks | Any operation where output informs next step |
+
+### Evidence-Before-Claims with Subagents
+
+Subagent output is still evidence:
+- When subagent reports results, you can reference them
+- If subagent hasn't reported yet, you CANNOT claim you searched/checked
+- Background subagents: Don't claim completion until they report back
+
+**The Rule**: No subagent output = didn't happen = can't claim it.
+
 ## Part 2: Non-Disruptive Recording with Subagents
 
-**IMPORTANT**: When you're in the middle of work and identify something worth recording, DON'T stop what you're doing. Use a subagent to record asynchronously.
+**IMPORTANT**: When you're in the middle of work and identify something worth recording, DON'T stop what you're doing. Use a **Bash subagent** to record asynchronously.
 
 ### Workflow
 
 1. **Apply the 3-question rubric** (output it visibly)
-2. **If score is 3/3**: Spawn a memory-recording subagent
+2. **If score is 3/3**: Spawn a Bash subagent with pre-planned commands
 3. **Continue your main work immediately** - don't wait for the subagent
 4. **When subagent reports back**, acknowledge briefly but don't context-switch
 
-**Why this works:** The subagent handles all Pensieve interaction independently. You stay focused on the main task. The recording happens in parallel, not serially.
+**Why this works:** The Bash subagent executes the commands you've already planned. You stay focused on the main task. Recording happens in background.
 
-### Subagent Prompt Template
+### Why Bash Subagent (not general-purpose)?
+
+- **Bash subagent**: Direct CLI execution, minimal overhead, runs in background
+- **general-purpose**: Unnecessary overhead for pre-planned commands
+- The main agent determines what to record and which template to use BEFORE spawning
+- Subagent just executes - no mid-workflow decisions needed
+
+### Bash Subagent Template for Recording
 
 Use this template when spawning memory-recording subagents:
 
 ```python
 Task(
-  subagent_type="general-purpose",
-  description="Record solution to Pensieve",
+  subagent_type="Bash",
+  run_in_background=True,
+  description="Record memory to Pensieve: [brief description]",
   prompt="""
-  Record a memory to Pensieve based on this context:
+  Record this memory to Pensieve:
 
-  **What happened:**
-  [Brief description of problem/pattern/workaround/resource]
+  # Create the entry (main agent has pre-determined all values)
+  pensieve entry create --template problem_solved \
+    --field problem="[PROBLEM - 1-2 sentences]" \
+    --field root_cause="[ROOT_CAUSE - 1-2 sentences]" \
+    --field solution="[SOLUTION - 2-3 sentences]" \
+    --field learned="[TAKEAWAY - 1 sentence]" \
+    --tag [tag1] --tag [tag2] --new-tag [new-tag-if-needed]
 
-  **Key details:**
-  - [Detail 1]
-  - [Detail 2]
-  - [Detail 3]
+  # If related entry ID was provided, also run:
+  # pensieve entry link [new-id] [related-id] --type relates_to
 
-  **Related entries (if any):**
-  - [Entry ID and why it's related]
-
-  **Your task:**
-  1. Determine the most appropriate template using: pensieve template list
-  2. Review the template structure: pensieve template show <name>
-  3. Check existing tags: pensieve tag list
-  4. Create the entry with all relevant fields AND 2-5 descriptive tags
-     - Use --tag for existing tags (validated against project)
-     - Use --new-tag for genuinely new concepts
-     - Keep field values concise (1-3 sentences per field)
-     - For entries with many fields or long values, use JSON --from-file approach instead
-  5. If related entries were provided, create links using:
-     - pensieve entry link <new-id> <related-id> --type <link-type>
-  6. Verify the entry was created successfully
-  7. Report back with the entry ID and tags used
-
-  CRITICAL:
-  - Do NOT skip tags. Every entry must have at least 2 tags.
-  - Use --tag for existing tags, --new-tag only for genuinely new concepts.
-  - If --tag fails (unknown tag), check existing tags and use the canonical one.
-
-  Do NOT do anything else. Just record this memory with tags/links and confirm.
+  Report back with the entry ID when complete.
   """
 )
 ```
 
-**Adapt the context section** to include:
-- For problems: problem, root cause, solution, files changed, learning, tags (technology, category, domain)
-- For patterns: name, description, location, why useful, example, tags (domain, pattern-type)
-- For workarounds: issue, workaround, why needed, reference, tags (tool, problem-type)
-- For resources: name, URL, what it covers, when useful, tags (technology, documentation)
+**Key differences from previous pattern:**
+1. `subagent_type="Bash"` instead of `"general-purpose"`
+2. `run_in_background=True` for non-blocking recording
+3. Main agent pre-determines template and ALL field values
+4. Command is ready to execute - no discovery steps needed
+5. Simpler, more efficient, less context usage
+
+**Adapt the command** for different entry types:
+- For problems: template `problem_solved` with problem, root_cause, solution, learned fields
+- For patterns: template `pattern_discovered` with name, description, location, example fields
+- For workarounds: template `workaround` with issue, workaround, why_needed fields
+- For resources: template `resource_found` with name, url, description, when_useful fields
 
 **Single-Line vs JSON Approach:**
 
@@ -639,16 +686,29 @@ Before spawning the subagent, run `pensieve entry search --tag <relevant-tag>` t
 ### Before Adding Tags: Check What Exists
 
 <CRITICAL>
-**MANDATORY before tagging any entry:**
+**MANDATORY before tagging any entry**: Use a Bash subagent to check existing tags.
 
-```bash
-# See existing tags and their usage
-pensieve tag list
+```python
+Task(
+  subagent_type="Bash",
+  run_in_background=False,  # Need results before creating entry
+  description="List existing Pensieve tags",
+  prompt="""
+  List all existing tags:
+
+  pensieve tag list
+
+  Report the tags and their usage counts.
+  """
+)
 ```
 
-**Evidence before creation - show the output:**
+**Why foreground (not background)**: You need the tag list BEFORE specifying tags in the entry creation command.
+
+**Evidence before creation - wait for subagent output:**
 - CANNOT say: "I'll tag this with authentication"
-- MUST show: Output of `pensieve tag list` before adding tags
+- MUST wait for: Subagent output showing existing tags
+- THEN determine which tags to use
 
 **Why this matters:**
 1. **Prevents duplicate tags** - Avoid creating `auth` when `authentication` already has 15 uses
@@ -657,7 +717,7 @@ pensieve tag list
 4. **Improves discoverability** - Consistent tags make search more effective
 
 **The Rule:**
-No evidence = didn't check = likely creating duplicate tags.
+No subagent output = didn't check = likely creating duplicate tags.
 </CRITICAL>
 
 ### Tag Selection Guidelines
@@ -766,27 +826,35 @@ No evidence = didn't happen.
 
 ### When to Search
 
-**At session start:**
-```bash
-# See recent memories for context
-pensieve entry search
+**At session start**: Use inline `pensieve journal` (part of mandatory protocol - see above)
+
+**During work (before starting tasks, when stuck)**: Use a Bash subagent
+
+```python
+Task(
+  subagent_type="Bash",
+  run_in_background=False,  # Need results before proceeding
+  description="Search Pensieve for [topic]",
+  prompt="""
+  Search for relevant memories:
+
+  # Search by tags (most useful!)
+  pensieve entry search --tag [relevant-tag]
+
+  # Or search by template type:
+  pensieve entry search --template problem_solved
+
+  Report all matching entries with their IDs and titles.
+  """
+)
 ```
 
-**Before starting similar tasks:**
-```bash
-# Search by template type
-pensieve entry search --template <name>
+**Why foreground subagent (not background)**: You need search results before deciding how to proceed. Wait for subagent output before claiming "no relevant memories found."
 
-# Search by tags (most useful!)
-pensieve entry search --tag oauth
-pensieve entry search --tag production-bug --tag authentication
-
-# Search by keywords (use --help to see search options)
-pensieve entry search --help
-```
-
-**When stuck:**
-Check for existing solutions or workarounds before investigating from scratch. Use tags to narrow your search to relevant domains.
+**Why subagent (not inline):**
+- Keeps main conversation context cleaner
+- Search output can be verbose
+- Subagent results still satisfy "evidence-before-claims"
 
 **Tag-based search is powerful:**
 - `--tag oauth --tag redis` finds entries with ANY of these tags
@@ -803,28 +871,50 @@ Check for existing solutions or workarounds before investigating from scratch. U
 **ALWAYS link new entries to superseded or related entries. Never leave obsolete entries unlinked.**
 </CRITICAL>
 
-**When better solutions found:**
-```bash
-# Create new entry with improved solution (use existing tags)
-pensieve entry create --template problem_solved \
-  --field problem="..." \
-  --field solution="Improved approach: ..." \
-  --tag oauth --tag production-bug
+Use Bash subagents for maintenance operations (background, non-blocking):
 
-# Link to old entry (marks old entry as superseded)
-pensieve entry link <new-id> <old-id> --type supersedes
+**When better solutions found:**
+```python
+Task(
+  subagent_type="Bash",
+  run_in_background=True,
+  description="Record improved solution and supersede old entry",
+  prompt="""
+  # 1. Create new entry with improved solution
+  NEW_ID=$(pensieve entry create --template problem_solved \
+    --field problem="[problem]" \
+    --field solution="Improved approach: [solution]" \
+    --tag [tag1] --tag [tag2] \
+    --output-id)
+
+  # 2. Link to old entry (marks old as superseded)
+  pensieve entry link $NEW_ID [old-entry-id] --type supersedes
+
+  Report the new entry ID and confirmation of link.
+  """
+)
 ```
 
 **When workarounds become obsolete:**
-```bash
-# Create resolution entry (use existing tags, add new if needed)
-pensieve entry create --template problem_solved \
-  --field problem="Original workaround no longer needed" \
-  --field solution="Fixed in library version 2.3" \
-  --tag oauth --new-tag resolved
+```python
+Task(
+  subagent_type="Bash",
+  run_in_background=True,
+  description="Mark workaround as deprecated",
+  prompt="""
+  # 1. Create resolution entry
+  NEW_ID=$(pensieve entry create --template problem_solved \
+    --field problem="Original workaround no longer needed" \
+    --field solution="Fixed in library version [version]" \
+    --tag [tag] --new-tag resolved \
+    --output-id)
 
-# Deprecate old workaround
-pensieve entry link <new-id> <workaround-id> --type deprecates
+  # 2. Deprecate old workaround
+  pensieve entry link $NEW_ID [workaround-id] --type deprecates
+
+  Report completion.
+  """
+)
 ```
 
 **Why linking matters:**
